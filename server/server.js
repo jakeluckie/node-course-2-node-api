@@ -94,31 +94,24 @@ app.patch('/todos/:id', (req, res) => {
     });
 });
 
-// app.patch('/todos/:id', (req, res) => {
-//     var id = req.params.id;
-//     var body = _.pick(req.body, ['text', 'completed']);
-  
-//     if (!ObjectID.isValid(id)) {
-//       return res.status(404).send();
-//     }
-  
-//     if (_.isBoolean(body.completed) && body.completed) {
-//       body.completedAt = new Date().getTime();
-//     } else {
-//       body.completed = false;
-//       body.completedAt = null;
-//     }
-  
-//     Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
-//       if (!todo) {
-//         return res.status(404).send();
-//       }
-  
-//       res.send({todo});
-//     }).catch((e) => {
-//       res.status(400).send();
-//     })
-//   });
+app.post('/users', (req, res) => {
+    var body = _.pick(req.body, ['email', 'password']);
+    var user = new User(body);
+
+
+    user.save().then(() => {
+        user.generateAuthToken();
+        //res.send(userDoc);
+    }).then((token) => {
+        res.header('x-auth', token).send(user);
+    }).catch((e) => {
+        res.status(400).send(e);
+    });
+});
+
+// .catch((e) => {
+//     res.status(400).send();
+// });
 
 app.listen(port, () => {
     console.log(`Started up at ${port}`);
